@@ -11,7 +11,40 @@ exports.getAllPost = async (req, res) => {
     res.json({ message: "failed" });
   }
 };
-// exports.createNewPost = async (req, res) => {
+exports.createNewPost = async (req, res) => {
+    try {
+        const posts = {};
+        const id = randomBytes(4).toString("hex");
+        const { title } = req.body;
+        posts[id] = [id, title]; 
+      // Create an array to store the created posts
+        console.log(posts,"posts")
+        console.log(Object.entries(posts),"object-posts")
+
+ 
+      // Loop through each key-value pair in the posts object
+      for (const [postId, postValues] of Object.entries(posts)) {
+        // Create a new instance of the post model
+        console.log(postId,"postId")
+        console.log(postValues,"postValues")
+
+        const post = new postModal({
+          _id: postId,
+          title: postValues,
+        });
+        // Save the post to the database
+        console.log(post,"post")
+        const createdPost = await post.save();
+      }
+    } catch (err) {
+      console.log(err);
+      res.json({ message: "failed" });
+    }
+  };
+
+
+
+  // exports.createNewPost = async (req, res) => {
 //   try {
 //       const id = randomBytes(4).toString("hex");
 //       console.log(req.body, "req.body");
@@ -34,31 +67,3 @@ exports.getAllPost = async (req, res) => {
 //     res.json({ message: "failed" });
 //   }
 // };
-exports.createNewPost = async (req, res) => {
-    try {
-        const posts = {};
-        const id = randomBytes(4).toString("hex");
-        const { title } = req.body;
-        posts[id] = [id, title]; 
-      // Create an array to store the created posts
-      const createdPosts = [];
-  
-      // Loop through each key-value pair in the posts object
-      for (const [postId, postValues] of Object.entries(posts)) {
-        // Create a new instance of the post model
-        const post = new postModal({
-          _id: postId,
-          title: postValues,
-        });
-        // Save the post to the database
-        const createdPost = await post.save();
-        createdPosts.push(createdPost);
-      }
-  
-      console.log(createdPosts, "createdPosts");
-      res.status(201).send(createdPosts);
-    } catch (err) {
-      console.log(err);
-      res.json({ message: "failed" });
-    }
-  };
